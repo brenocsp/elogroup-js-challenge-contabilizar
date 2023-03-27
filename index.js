@@ -78,3 +78,4 @@ document.addEventListener('keydown', function(event) {
         lancamentos.push({cpf:'93975495022',valor:546.78})
         atualizarPaineis('93975495022');
     }
+});
