@@ -63,7 +63,7 @@ const atualizarPaineis = (cpf) => {
 }
 
 document.addEventListener('keydown', function(event) {
-    if (event.code == 'KeyT') {
+    if (event.code == 'KeyT' && (event.ctrlKey || event.metaKey)) {
         lancamentos.push({cpf:'74914372061',valor:1234.78})
         lancamentos.push({cpf:'74914372061',valor:-123.56})
         lancamentos.push({cpf:'74914372061',valor:-865.00})
@@ -78,4 +78,3 @@ document.addEventListener('keydown', function(event) {
         lancamentos.push({cpf:'93975495022',valor:546.78})
         atualizarPaineis('93975495022');
     }
-});
