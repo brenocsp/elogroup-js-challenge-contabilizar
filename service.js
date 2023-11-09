@@ -14,7 +14,7 @@ const validarEntradaDeDados = (lancamento) => {
    if (!eNumero) {
       mensagens.push('Valor deve ser numérico.');
    }
-   
+
    else if (lancamento.valor > 15000) {
       mensagens.push('Valor não pode ser superior a 15000,00.');
    }
@@ -24,13 +24,13 @@ const validarEntradaDeDados = (lancamento) => {
    }
 
    if (mensagens.length > 0) {
-      return mensagens.join('\r\n');;
+      return mensagens.join('\r\n');
    }
-   
+
    return null;
 }
 
-
+// Função auxiliar para validar um cpf
 const eCpfValido = (cpf) => {
    if (cpf.length != 11) {
       return false;
@@ -82,22 +82,24 @@ const eCpfValido = (cpf) => {
 
 const recuperarSaldosPorConta = (lancamentos) => {
    const saldos = lancamentos.reduce((acum, atual) => {
+      // Função de callback para encontrar um objeto no acumulador acum que tenha o mesmo valor de cpf que o atual
       const lancamento = acum.find(({ cpf }) => cpf === atual.cpf);
 
-      if (lancamento) { 
+      if (lancamento) {
          lancamento.valor += atual.valor;
       }
-      
+
       else {
-         acum.push( {cpf: atual.cpf, valor: atual.valor} );
+         acum.push({ cpf: atual.cpf, valor: atual.valor });
       }
 
       return acum;
    }, []);
-   
+
    return saldos;
 }
 
+// Função auxiliar para achar os lançamentos de um cpf
 const recuperarLancamentosPorCpf = (cpf, lancamentos) => {
    const saldosDoCpf = lancamentos.filter(obj => {
       return obj.cpf === cpf;
@@ -122,7 +124,8 @@ const recuperarMaiorMenorLancamentos = (cpf, lancamentos) => {
 const recuperarMaioresSaldos = (lancamentos) => {
    const saldos = recuperarSaldosPorConta(lancamentos);
 
-   saldos.sort((a,b) => b.valor - a.valor); 
+   // Ordem decrescente com base em valor
+   saldos.sort((a, b) => b.valor - a.valor);
 
    return saldos.slice(0, 3);
 }
@@ -130,14 +133,28 @@ const recuperarMaioresSaldos = (lancamentos) => {
 const recuperarMaioresMedias = (lancamentos) => {
    const saldos = recuperarSaldosPorConta(lancamentos);
 
-   const mediaDeLancamentos = Object.keys(saldos).map(function(k){
-      const item  = saldos[k];
+   // Iteração sobre o array de chaves do objeto saldos, cada chave é k
+   const mediaDeLancamentos = Object.keys(saldos).map(function (k) {
+      const item = saldos[k];
       const lancamentosDoCpf = recuperarLancamentosPorCpf(item.cpf, lancamentos);
 
-      return { cpf: item.cpf, valor: (item.valor/lancamentosDoCpf.length) }
-  })
-   
-  mediaDeLancamentos.sort((a,b) => b.valor - a.valor); 
-  
-  return mediaDeLancamentos.slice(0, 3);
+      return { cpf: item.cpf, valor: (item.valor / lancamentosDoCpf.length) }
+   })
+
+   // Outras soluções:
+
+   // const mediaDeLancamentos = saldos.map((item) => {
+   //    const lancamentosDoCpf = recuperarLancamentosPorCpf(item.cpf, lancamentos);
+   //    return { cpf: item.cpf, valor: (item.valor / lancamentosDoCpf.length) };
+   // });
+
+   // for (let i = 0; i < saldos.length; i++) {
+   //    const item = saldos[i];
+   //    const lancamentosDoCpf = await recuperarLancamentosPorCpf(item.cpf, lancamentos);
+   //    mediaDeLancamentos.push({ cpf: item.cpf, valor: (item.valor / lancamentosDoCpf.length) });
+   // }
+
+   mediaDeLancamentos.sort((a, b) => b.valor - a.valor);
+
+   return mediaDeLancamentos.slice(0, 3);
 }
